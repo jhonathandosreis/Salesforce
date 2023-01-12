@@ -1,0 +1,68 @@
+public class ImobiliariaController {
+    
+    //Inicio de variáveis
+    public Integer quarto {get; set;}
+    public Integer banheiro {get; set;}
+    public Integer sala {get; set;}
+    public Integer conzinha {get; set;}
+    public Integer copa {get; set;}
+    public Integer suite {get; set;}
+    public Integer vagaGaragem {get; set;}
+    public Integer valor {get; set;}
+    public string tipoImovel {get; set;}
+    //Fim de variáveis
+    
+    //Método picklist Tipo do Imovel   
+    public List<SelectOption> getMinhasOpcoes() {  
+        
+        Schema.DescribeFieldResult describeResult = Imoveis__c.Tipo_do_Imovel__c.getDescribe();
+        
+        List<Schema.PicklistEntry> entries = describeResult.getPickListValues();
+        
+        List<SelectOption> optionsToReturn = new List<SelectOption>();
+        
+        for(Schema.PicklistEntry pEntry : entries){
+            if(pEntry.isActive()){
+                optionsToReturn.add(new SelectOption(pEntry.getValue(), pEntry.getLabel()));
+            }   
+        }
+        return optionsToReturn;     
+    }
+    
+    //Metodo Salvar
+    public void salvarImoveis() {
+        Imoveis__c objImoveis = new Imoveis__c();
+        
+        objImoveis.Quartos__c = quarto;
+        objImoveis.Banheiro__c = banheiro;
+        objImoveis.Sala__c = sala;
+        objImoveis.Conzinha__c = conzinha;
+        objImoveis.Copa__c = copa;
+        objImoveis.Suite__c = suite;
+        objImoveis.Garagem__c = vagaGaragem;
+        objImoveis.Valor__c = valor;
+        objImoveis.Tipo_do_Imovel__c = tipoImovel;
+        
+        try {
+            if(objImoveis.Tipo_do_Imovel__c != 'Nenhum' && objImoveis.Tipo_do_Imovel__c != null) {
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.CONFIRM, 'Imóvel cadastrado com sucesso!'));
+                insert objImoveis;
+                
+                //Limpa os campos ao salvar
+                quarto = null;
+                banheiro = null;
+                sala = null;
+                conzinha = null;
+                copa = null;
+                suite = null;
+                vagaGaragem = null;
+                valor = null;
+                tipoImovel = null;
+            }else {
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'O campo tipo do imóvel deverá ser preenchido!'));
+            }
+        }catch(DmlException e) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Por favor verifique todos os campos antes de salvar!'));
+        }
+    }   
+}
